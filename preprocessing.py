@@ -84,5 +84,5 @@ def preprocessing_data(link_data, options = None):
 
 if __name__ == "__main__":
     import numpy as np
-    train_df_X, train_df_Y, test_df_X, test_df_Y  = preprocessing_data("data/regularite-mensuelle-tgv-aqst.csv")
+    train_df_X, train_df_Y, test_df_X, test_df_Y, validate_df_X, validate_df_Y= preprocessing_data("data/regularite-mensuelle-tgv-aqst.csv")
     print(sum(train_df_Y.iloc[0,:-1]))

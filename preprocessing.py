@@ -70,8 +70,8 @@ def preprocessing_data(link_data, options = None):
     df_Y = fitting_df[data_to_mantain]
     df_X = fitting_df.drop(columns=data_to_mantain)
 
-    validate_df_X = validate_df[data_to_mantain]
-    validate_df_Y = validate_df.drop(columns=data_to_mantain)
+    validate_df_Y = validate_df[data_to_mantain]
+    validate_df_X = validate_df.drop(columns=data_to_mantain)
 
     train_df_X,test_df_X , train_df_Y,test_df_Y = train_test_split(df_X,df_Y, test_size=0.2)
 

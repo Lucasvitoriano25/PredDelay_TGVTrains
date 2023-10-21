@@ -80,7 +80,7 @@ def preprocessing_data(link_data, options = None):
     test_df_X = test_df_X.reset_index(drop=True)
     test_df_Y = test_df_Y.reset_index(drop=True)
 
-    return  train_df_X, train_df_Y, test_df_X, test_df_Y 
+    return  train_df_X, train_df_Y, test_df_X, test_df_Y, validate_df_X, validate_df_Y
 
 if __name__ == "__main__":
     import numpy as np

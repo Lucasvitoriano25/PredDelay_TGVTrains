@@ -6,7 +6,8 @@ from sklearn.model_selection import train_test_split
 def preprocessing_data(link_data, options = None):
 
     if options is None:
-        options = {'Standarize' : True}
+        options = {'standarize' : True,
+                   'standarize_output': False}
 
     # Read the file
     retards_df = pd.read_csv(link_data, sep=';')
@@ -29,11 +30,18 @@ def preprocessing_data(link_data, options = None):
     
     
     # Standarize to improve the model
-    if options['Standarize']:
+    if options['standarize']:
 
-    ## Not standari
+    ## Not standarized
         scaler = StandardScaler()
-        columns_to_standardize = retards_df.columns.drop(["date","service", "gare_depart","gare_arrivee"])
+        list_drop = ["date","service", "gare_depart","gare_arrivee"]
+        if not options['standarize_output']:
+            list_prct = ['prct_cause_externe', 'prct_cause_infra', 'prct_cause_gestion_trafic',
+                          'prct_cause_materiel_roulant', 'prct_cause_gestion_gare',
+                          'prct_cause_prise_en_charge_voyageurs']
+            list_drop += list_prct
+            retards_df[list_prct] = retards_df[list_prct]/100
+        columns_to_standardize = retards_df.columns.drop(list_drop)
         retards_df[columns_to_standardize] = scaler.fit_transform(retards_df[columns_to_standardize])
     
     # Add moth as int 
@@ -55,10 +63,6 @@ def preprocessing_data(link_data, options = None):
 
     fitting_df = fitting_df.drop("date",axis=1)
     validate_df = validate_df.drop("date",axis=1)
-
-    data_to_mantain = ['prct_cause_externe', 'prct_cause_infra', 'prct_cause_gestion_trafic', 'prct_cause_materiel_roulant', 
-                       'prct_cause_gestion_gare', 'prct_cause_prise_en_charge_voyageurs', 'total_retard_mean', 
-                       'total_retard_alltrains_mean']
     
     data_to_mantain = ['prct_cause_externe', 'prct_cause_infra', 'prct_cause_gestion_trafic', 'prct_cause_materiel_roulant', 
                        'prct_cause_gestion_gare', 'prct_cause_prise_en_charge_voyageurs', 'total_retard_mean']
@@ -66,8 +70,8 @@ def preprocessing_data(link_data, options = None):
     df_Y = fitting_df[data_to_mantain]
     df_X = fitting_df.drop(columns=data_to_mantain)
 
-    validate_df_X = validate_df[data_to_mantain]
-    validate_df_Y = validate_df.drop(columns=data_to_mantain)
+    validate_df_Y = validate_df[data_to_mantain]
+    validate_df_X = validate_df.drop(columns=data_to_mantain)
 
     train_df_X,test_df_X , train_df_Y,test_df_Y = train_test_split(df_X,df_Y, test_size=0.2)
 
@@ -76,8 +80,9 @@ def preprocessing_data(link_data, options = None):
     test_df_X = test_df_X.reset_index(drop=True)
     test_df_Y = test_df_Y.reset_index(drop=True)
 
-    return  train_df_X, train_df_Y, test_df_X, test_df_Y 
+    return  train_df_X, train_df_Y, test_df_X, test_df_Y, validate_df_X, validate_df_Y
 
 if __name__ == "__main__":
-    train_df_X, train_df_Y, test_df_X, test_df_Y  = preprocessing_data("data/regularite-mensuelle-tgv-aqst.csv")
-    print(train_df_X["mois"])
+    import numpy as np
+    train_df_X, train_df_Y, test_df_X, test_df_Y, validate_df_X, validate_df_Y= preprocessing_data("data/regularite-mensuelle-tgv-aqst.csv")
+    print(sum(train_df_Y.iloc[0,:-1]))
